@@ -9,7 +9,7 @@ var users = {}
 
 io.on('connection', (client) => {
   client.on('onboard', (userData) => {
-    users[client.id] = {id: client.id, name: userData, data: {}}
+    users[client.id] = {id: client.id, name: userData.name, realname: userData.realname, gender: userData.gender, data: {}}
     client.emit('existuser', users)
     io.emit('newuser', users[client.id])
   })
