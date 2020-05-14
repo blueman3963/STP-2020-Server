@@ -8,12 +8,15 @@ const io = require('socket.io')(port, {
 var users = {}
 var light = {spot: .5, env: .5}
 
+var signatures = []
+
 io.on('connection', (client) => {
   client.on('onboard', (userData) => {
     users[client.id] = {id: client.id, name: userData.name, realname: userData.realname, gender: userData, data: {}}
     client.emit('existuser', users)
     io.emit('newuser', users[client.id])
     client.emit('light', light)
+    client.emit('draw',signatures)
   })
 
   client.on('move', data => {
@@ -28,9 +31,17 @@ io.on('connection', (client) => {
   })
   // disconnect
   client.on('disconnect', (data) => {
-    io.emit('kill', client.id)
-    delete users[client.id]
+    if(users[client.id]) {
+      io.emit('kill', client.id)
+      delete users[client.id]
+    }
   });
+
+  //draw
+  client.on('draw', data => {
+    signatures.push(data)
+    io.emit('draw',[data])
+  })
 });
 
 setInterval(() => {
