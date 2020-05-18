@@ -6,17 +6,24 @@ const io = require('socket.io')(port, {
 });
 
 var users = {}
-var light = {spot: .5, env: .5}
-
-var signatures = []
+var waiting = []
+var order = 0
 
 io.on('connection', (client) => {
+
+  client.on('ready', () => {
+    if(Object.keys(users).length < 2) {
+      client.emit('ready')
+    } else {
+      waiting.push(client.id)
+      client.emit('queue',waiting.length)
+    }
+  })
+
   client.on('onboard', (userData) => {
-    users[client.id] = {id: client.id, name: userData.name, realname: userData.realname, gender: userData, data: {}}
-    client.emit('existuser', users)
+    users[client.id] = {id: client.id, role: userData.role, realname: userData.realname, data: {}}
+    client.emit('exist', users)
     io.emit('newuser', users[client.id])
-    client.emit('light', light)
-    client.emit('draw',signatures)
   })
 
   client.on('move', data => {
@@ -25,23 +32,28 @@ io.on('connection', (client) => {
     }
   })
 
-  client.on('light', data => {
-    light = data
-    io.emit('light', light)
-  })
   // disconnect
   client.on('disconnect', (data) => {
+
+
+    waiting.forEach((id,index) => {
+      io.to(id).emit('queue',index+1)
+      if(id == client.id) {
+        waiting.splice(index,1)
+      }
+    })
+
     if(users[client.id]) {
       io.emit('kill', client.id)
       delete users[client.id]
+
+      let next = waiting.shift()
+      io.to(next).emit('ready')
     }
+
+
   });
 
-  //draw
-  client.on('draw', data => {
-    signatures.push(data)
-    io.emit('draw',[data])
-  })
 });
 
 setInterval(() => {
