@@ -8,6 +8,7 @@ const io = require('socket.io')(port, {
 var users = {}
 var waiting = []
 var order = 0
+var chat = []
 
 io.on('connection', (client) => {
 
@@ -21,9 +22,10 @@ io.on('connection', (client) => {
   })
 
   client.on('onboard', (userData) => {
-    users[client.id] = {id: client.id, role: userData.role, realname: userData.realname, data: {}}
+    users[client.id] = {id: client.id, role: userData.role, realname: userData.first+' '+userData.last, data: {}}
     client.emit('exist', users)
     io.emit('newuser', users[client.id])
+    client.emit('chathistory', chat)
   })
 
   client.on('move', data => {
@@ -32,9 +34,15 @@ io.on('connection', (client) => {
     }
   })
 
+  client.on('message', data => {
+    chat.push({id:client.id, msg: data})
+    io.emit('chathistory', chat)
+    io.emit('message', {id:client.id, msg: data})
+  })
+
+
   // disconnect
   client.on('disconnect', (data) => {
-
 
     waiting.forEach((id,index) => {
       io.to(id).emit('queue',index+1)
@@ -50,7 +58,6 @@ io.on('connection', (client) => {
       let next = waiting.shift()
       io.to(next).emit('ready')
     }
-
 
   });
 
