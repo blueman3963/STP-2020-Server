@@ -10,6 +10,15 @@ var waiting = []
 var order = 0
 var chat = []
 
+let length = 1299
+let start = 0
+setInterval(() => {
+  start++
+  if(start >= length) {
+    start = 0
+  }
+},1000)
+
 io.on('connection', (client) => {
 
   client.on('ready', () => {
@@ -26,6 +35,7 @@ io.on('connection', (client) => {
     client.emit('exist', users)
     io.emit('newuser', users[client.id])
     client.emit('chathistory', chat)
+    client.emit('artstart', start)
   })
 
   client.on('move', data => {
