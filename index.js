@@ -17,7 +17,7 @@ setInterval(() => {
   if(start >= length) {
     start = 0
   }
-},1000)
+},3000)
 
 io.on('connection', (client) => {
 
@@ -45,9 +45,9 @@ io.on('connection', (client) => {
   })
 
   client.on('message', data => {
-    chat.push({id:client.id, msg: data})
+    chat.push({id:client.id, msg: data.data, name:data.name})
     io.emit('chathistory', chat)
-    io.emit('message', {id:client.id, msg: data})
+    io.emit('message', {id:client.id, msg: data.data, name: data.name})
   })
 
 
