@@ -61,6 +61,7 @@ io.on('connection', (client) => {
     db.collection('login').doc(logtime+'_'+client.id).set({
       first: userData.first,
       last: userData.last,
+      email: userData.email,
       logtime: logtime
     })
     users[client.id].logtime = logtime
