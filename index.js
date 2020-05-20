@@ -36,7 +36,7 @@ setInterval(() => {
   }
 },3000)
 
-const threshold = 2
+const threshold = 40
 
 io.on('connection', (client) => {
 
