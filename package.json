@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase": "^7.14.4",
     "socket.io": "^2.3.0"
   }
 }
