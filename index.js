@@ -28,14 +28,14 @@ var order = 0
 var chat = []
 var clap = 0
 
-let length = 1299
+let length = 1298
 let start = 0
 setInterval(() => {
   start++
   if(start >= length) {
     start = 0
   }
-},3000)
+},6000)
 
 var threshold = 35
 
