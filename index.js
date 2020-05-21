@@ -26,6 +26,7 @@ var users = {}
 var waiting = []
 var order = 0
 var chat = []
+var clap = 0
 
 let length = 1299
 let start = 0
@@ -36,7 +37,7 @@ setInterval(() => {
   }
 },3000)
 
-const threshold = 40
+var threshold = 35
 
 io.on('connection', (client) => {
 
@@ -61,6 +62,7 @@ io.on('connection', (client) => {
     db.collection('login').doc(logtime+'_'+client.id).set({
       first: userData.first,
       last: userData.last,
+      email: userData.email,
       logtime: logtime
     })
     users[client.id].logtime = logtime
@@ -69,6 +71,20 @@ io.on('connection', (client) => {
   client.on('move', data => {
     if(users[client.id]){
       users[client.id].data = data
+    }
+  })
+
+  client.on('threshold', data => {
+    threshold = data
+  })
+
+  client.on('clap', () => {
+    clap++
+    if(clap > 10) {
+      clap = 0
+      db.collection('clap').doc().set({
+        clap:true
+      })
     }
   })
 
