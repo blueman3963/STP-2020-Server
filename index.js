@@ -135,4 +135,5 @@ io.on('connection', (client) => {
 
 setInterval(() => {
   io.emit('render',users)
+  io.emit('threshold', threshold)
 },20)
