@@ -10,7 +10,7 @@ const firebase = require('firebase')
 
 // Initialize Firebase
 const config = {
-  apiKey: "AIzaSyDVL8oNN6oMXZT1HFGuzR-XxdRiP2PU9K0",
+  apiKey: "*",
   authDomain: "stp-data-30060.firebaseapp.com",
   databaseURL: "https://stp-data-30060.firebaseio.com",
   projectId: "stp-data-30060",
@@ -23,6 +23,32 @@ const firebaseApp = firebase.apps.length ? firebase.apps[0] : firebase.initializ
 const db = firebaseApp.firestore();
 
 var users = {}
+for(i = 0; i < 50; i++) {
+  let data = {
+    id: 'Dummy'+i,
+    role: '0',
+    realname: 'Dummy',
+    data: {
+        pos: {
+          x: Math.random()*100-50,
+          y: 0,
+          z: Math.random()*100-50
+        },
+        aiming: {
+          x: 0,
+          z: 0
+        },
+        head: {
+          x: 0,
+          y: 0
+        },
+        walking: true,
+        claping: false,
+        prepare: false,
+      }
+  }
+  users['dummy'+i] = data
+}
 var waiting = []
 var order = 0
 var chat = []
@@ -37,7 +63,7 @@ setInterval(() => {
   }
 },6000)
 
-var threshold = 30
+var threshold = 99
 
 io.on('connection', (client) => {
 
